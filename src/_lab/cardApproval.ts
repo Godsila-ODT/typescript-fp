@@ -9,7 +9,7 @@ type LoadCardRequest = (filePath: Either<string, string>) => Either<string, stri
 type FilterApprove = (data: Either<string, string[]>) => Either<string, ApprovalResult[]>
 type FilterReject = (data: Either<string, string[]>) => Either<string, CardRequest[]>
 
-// start here...
+// start here....
 
 export const validateFileExists = (filePath: string): Either<string, string> =>
   !existsSync(path.resolve(filePath))
