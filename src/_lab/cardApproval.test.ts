@@ -1,6 +1,7 @@
 import { pipe } from "fp-ts/lib/function"
 import { filterApprove, filterReject, loadCardRequest, validateFileExists } from "./cardApproval"
-import { left, right } from "fp-ts/lib/Either"
+import { Either, left, match, right } from "fp-ts/lib/Either"
+import { ApprovalResult, CardRequest } from "./cardCriteria"
 
 describe('Card Approval', () => {
   it('should return only approved request records', () => {
@@ -26,11 +27,15 @@ describe('Card Approval', () => {
         validateFileExists,
         loadCardRequest,
         filterReject,
+        match<string, CardRequest[], string | CardRequest[]>(
+          (e) => e,
+          (result) => result
+        )
         // file -> Either
         // load card request from file -> Either
         // filter rejected -> Either
       )
-    ).toEqual(right([{ "cardType": undefined, "hasEmpCert": true, "name": "Jill", "salary": 9000 }]))
+    ).toEqual([{ "cardType": undefined, "hasEmpCert": true, "name": "Jill", "salary": 9000 }])
   })
 
   it('should return left error when file is corrupted', () => {
@@ -40,10 +45,14 @@ describe('Card Approval', () => {
         validateFileExists,
         loadCardRequest,
         filterApprove,
+        match<string, ApprovalResult[], string | ApprovalResult[]>(
+          (e) => e,
+          (result) => result
+        )
         // file -> Either
         // load card request from file and detect file corrupted -> Either
         // filter approved (let error pass through) -> Either
       )
-    ).toEqual(left('Error: Found unknown reject'))
+    ).toEqual('Error: Found unknown reject')
   })
 })
