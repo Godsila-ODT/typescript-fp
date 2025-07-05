@@ -45,11 +45,13 @@ const mapCard = (timeStampList: string[]): CardRequest[] =>
 const processLine = (acc: CardRequest[], line: string): CardRequest[] => {
   if (line === "name,salary,has_emp_cer") return [];
   const cardRequests = line.split(',')
-  if (cardRequests[0] !== '' && cardRequests[1] !== '' && cardRequests[2] !== '') {
+  if (isValueListNotEmpty(cardRequests)) {
     return appendCardRequest(acc, cardRequests)
   }
   return []
 }
+
+const isValueListNotEmpty = (data: string[]): boolean => data.filter(d => d.trim() !== '').length > 0
 
 const appendCardRequest = (cardRequest: CardRequest[], line: string[]): CardRequest[] =>
   [...cardRequest, {
