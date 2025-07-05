@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'fs'
 import { pipe } from "fp-ts/lib/function";
-import { Either, flatMap, left, right } from "fp-ts/lib/Either";
+import { Either, flatMap, isRight, left, right } from "fp-ts/lib/Either";
 import { filter } from "fp-ts/lib/Array";
 import path from 'path'
 import { ApprovalResult, cardCriteria, CardRequest } from './cardCriteria';
@@ -26,6 +26,8 @@ export const loadCardRequest: LoadCardRequest =
       ? left('Error: File has not content')
       : right(lines)
   ))
+
+// Filter Approve should return only approved request records
 
 export const filterApprove: FilterApprove =
   flatMap(cards =>
@@ -86,7 +88,7 @@ const cardInRange = (card: CardRequest): ApprovalResult => {
 
 const filterApproved = (cards: Either<string, ApprovalResult[]>): Either<string, ApprovalResult[]> =>
   pipe
-    (cards._tag === 'Right' ? cards.right : [],
+    (isRight(cards) ? cards.right : [],
       filterCard,
       (cardApprove) => cardApprove.length <= 0 ?
         left(`Error: Found unknown reject`) :
@@ -96,6 +98,8 @@ const filterApproved = (cards: Either<string, ApprovalResult[]>): Either<string,
 
 const filterCard = (cards: ApprovalResult[]): ApprovalResult[] =>
   cards.filter(card => card.cardType)
+
+// Filter Reject should return only rejected request records
 
 export const filterReject: FilterReject =
   flatMap(cards =>
@@ -109,7 +113,7 @@ export const filterReject: FilterReject =
 
 const filterRejected = (cards: Either<string, ApprovalResult[]>): Either<string, CardRequest[]> =>
   pipe
-    (cards._tag === 'Right' ? cards.right : [],
+    (isRight(cards) ? cards.right : [],
       filterRejectCard,
       (cardApprove) => !cardApprove ?
         left(`Error: Found unknown reject`) :
