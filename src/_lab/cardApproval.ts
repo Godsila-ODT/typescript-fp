@@ -21,7 +21,7 @@ export const loadCardRequest: LoadCardRequest =
   flatMap(path => pipe(
     readFileSync(path, 'utf-8'),
     (content) => content.split(/\r?\n/),
-    filter(line => line.trim() !== ''),
+    filter(line => line.trim() !== '' && line.trim() !== 'name,salary,has_emp_cer'),
     (lines) => lines.length === 0
       ? left('Error: File has not content')
       : right(lines)
@@ -43,12 +43,8 @@ const mapCard = (cardList: string[]): CardRequest[] =>
   )
 
 const processLine = (acc: CardRequest[], line: string): CardRequest[] => {
-  if (line === "name,salary,has_emp_cer") return [];
   const cardRequests = line.split(',')
-  if (isValueListNotEmpty(cardRequests)) {
-    return appendCardRequest(acc, cardRequests)
-  }
-  return []
+  return (isValueListNotEmpty(cardRequests)) ? appendCardRequest(acc, cardRequests) : []
 }
 
 const isValueListNotEmpty = (data: string[]): boolean => data.filter(d => d.trim() !== '').length > 0
