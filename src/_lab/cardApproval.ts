@@ -28,17 +28,17 @@ export const loadCardRequest: LoadCardRequest =
   ))
 
 export const filterApprove: FilterApprove =
-  flatMap(timeStamps =>
+  flatMap(cards =>
     pipe(
-      timeStamps,
+      cards,
       mapCard,
       approveResult,
       filterApproved,
     )
   )
 
-const mapCard = (timeStampList: string[]): CardRequest[] =>
-  timeStampList.reduce(
+const mapCard = (cardList: string[]): CardRequest[] =>
+  cardList.reduce(
     (acc, line) => processLine(acc, line), [] as CardRequest[]
   )
 
@@ -72,8 +72,8 @@ const approveResult = (cards: CardRequest[]): Either<string, ApprovalResult[]> =
   )
 
 
-const mapCardInRange = (timeStampList: CardRequest[]): ApprovalResult[] =>
-  timeStampList.reduce(
+const mapCardInRange = (cardList: CardRequest[]): ApprovalResult[] =>
+  cardList.reduce(
     (acc, line) => [...acc, cardInRange(line)], [] as ApprovalResult[]
   )
 
@@ -98,13 +98,13 @@ const filterApproved = (cards: Either<string, ApprovalResult[]>): Either<string,
 
     )
 
-const filterCard = (c: ApprovalResult[]): ApprovalResult[] =>
-  c.filter(cc => cc.cardType)
+const filterCard = (cards: ApprovalResult[]): ApprovalResult[] =>
+  cards.filter(card => card.cardType)
 
 export const filterReject: FilterReject =
-  flatMap(timeStamps =>
+  flatMap(cards =>
     pipe(
-      timeStamps,
+      cards,
       mapCard,
       approveResult,
       filterRejected
