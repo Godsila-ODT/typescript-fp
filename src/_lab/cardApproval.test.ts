@@ -1,6 +1,6 @@
 import { pipe } from "fp-ts/lib/function"
 import { filterApprove, filterReject, loadCardRequest, validateFileExists } from "./cardApproval"
-import { Either, left, match, right } from "fp-ts/lib/Either"
+import { match, right } from "fp-ts/lib/Either"
 import { ApprovalResult, CardRequest } from "./cardCriteria"
 
 describe('Card Approval', () => {
@@ -13,9 +13,6 @@ describe('Card Approval', () => {
         validateFileExists,
         loadCardRequest,
         filterApprove,
-        // file -> Either
-        // load card request from file -> Either
-        // filter approved -> Either
       )
     ).toEqual(right(response))
   })
@@ -31,9 +28,6 @@ describe('Card Approval', () => {
           (e) => e,
           (result) => result
         )
-        // file -> Either
-        // load card request from file -> Either
-        // filter rejected -> Either
       )
     ).toEqual([{ "cardType": undefined, "hasEmpCert": true, "name": "Jill", "salary": 9000 }])
   })
@@ -49,9 +43,6 @@ describe('Card Approval', () => {
           (e) => e,
           (result) => result
         )
-        // file -> Either
-        // load card request from file and detect file corrupted -> Either
-        // filter approved (let error pass through) -> Either
       )
     ).toEqual('Error: Found unknown reject')
   })
